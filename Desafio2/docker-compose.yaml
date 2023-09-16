@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+
+  node-app:
+    build:
+      #subindo a imagem da pasta Framework/Node
+      context: node
+      #com o nome node-app
+    container_name: node-app
+    #chamando o dockerize para aguardar a criação do serviço mysql-db em um tempo de 20s e após isso chamará o node index.js
+    entrypoint: dockerize -wait tcp://mysql-db:3306 -timeout 20s node index.js
+    #associando a rede node-network
+    networks:
+      - node-network
+    #realizar um backup automaticamente, caso o container caia, terá uma copia do que foi pro servidor no local
+    volumes:
+      - ./node:/usr/src/app
+    tty: true
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-db
+
+
+  mysql-db:
+    image: mysql:5.7
+    #comando necessário para executar o mysql. Ele é o CMD da imagem.
+    command: --innodb-use-native-aio=0
+    container_name: mysql-db
+    #se o container cair, ele irá restartar automaticamente
+    restart: always
+    #pra não prender o terminal
+    tty: true
+    #realizar um backup automaticamente, caso o container caia, terá uma copia do que foi pro servidor no local
+    volumes: 
+      - ./mysql:/var/lib/mysql
+    environment: 
+      #variável de ambiente que será criado baseado nelas
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+    networks: 
+      - node-network
+
+networks: 
+  node-network:
+    driver: bridge
