@@ -34,7 +34,7 @@ services:
     tty: true
     #realizar um backup automaticamente, caso o container caia, terá uma copia do que foi pro servidor no local
     volumes: 
-      - ./mysql:/var/lib/mysql
+      - ./mysql-db:/var/lib/mysql
     environment: 
       #variável de ambiente que será criado baseado nelas
       - MYSQL_DATABASE=nodedb
