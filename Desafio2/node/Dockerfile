@@ -24,6 +24,6 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
     && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 #expondo a porta padrão
-EXPOSE 8080
+EXPOSE 3000
 
 ENTRYPOINT [ "node","index.js" ]

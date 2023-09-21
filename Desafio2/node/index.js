@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 8080
+const port = 3000
 const config = {
     //nome do serviço que o docker-compose criou
     host: 'mysql-db',
@@ -15,12 +15,12 @@ const createTable = `create table people(id int not null auto_increment, name va
 const sql = `INSERT INTO people(name) values ?`
 var values = [
     ['Marcelo'],
-    ['Thayssa'],
+    ['Maria'],
     ['Joao'],
     ['Gianni'],
     ['Gabriel'],
-    ['William'],
-    ['Wesley']
+    ['Cristina'],
+    ['Alessandra']
   ];
 const select = `SELECT * FROM people`
 var html = "<h1>Full Cycle</h1>";
