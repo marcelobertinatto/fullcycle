@@ -9,16 +9,17 @@ services:
       #com o nome node-app
     container_name: node-app
     #chamando o dockerize para aguardar a criação do serviço mysql-db em um tempo de 20s e após isso chamará o node index.js
-    entrypoint: dockerize -wait tcp://mysql-db:3306 -timeout 20s node index.js
+    #sh de shell script e -c significa que terá mais de um comando para ser executado
+    entrypoint: dockerize -wait tcp://mysql-db:3306 -timeout 20s sh -c "npm install && npm install express --save && npm install mysql && node index.js"
     #associando a rede node-network
     networks:
       - node-network
     #realizar um backup automaticamente, caso o container caia, terá uma copia do que foi pro servidor no local
     volumes:
       - ./node:/usr/src/app
+      #caso fosse necessário criar um link simbólico dentro do docker-compose:
+      # - /usr/src/app/node_modules # volume anonimo (link simbolico)
     tty: true
-    ports:
-      - "3000:3000"
     depends_on:
       - mysql-db
 
@@ -28,7 +29,7 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - "8080:8080"
+      - "8080:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
@@ -38,7 +39,7 @@ services:
 
 
   mysql-db:
-    image: mysql:5.7
+    build: ./db
     #comando necessário para executar o mysql. Ele é o CMD da imagem.
     command: --innodb-use-native-aio=0
     container_name: mysql-db
@@ -48,6 +49,7 @@ services:
     tty: true
     #realizar um backup automaticamente, caso o container caia, terá uma copia do que foi pro servidor no local
     volumes: 
+      #caso não tenha mysql-db folder, será necessário criar essa pasta local para que não erro na subida do container
       - ./mysql-db:/var/lib/mysql
     environment: 
       #variável de ambiente que será criado baseado nelas
